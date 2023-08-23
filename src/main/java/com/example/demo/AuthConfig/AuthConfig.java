@@ -1,5 +1,6 @@
 package com.example.demo.AuthConfig;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,6 +13,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class AuthConfig {
+
+    @Autowired
+    private AuthFilter authFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.csrf().disable()
@@ -20,7 +25,7 @@ public class AuthConfig {
                 .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
                 .anyRequest().authenticated().and().cors();
 
-        http.addFilterBefore(new AuthFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

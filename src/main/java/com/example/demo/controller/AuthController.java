@@ -1,10 +1,13 @@
 package com.example.demo.controller;
 
+import com.example.demo.TokenConfig.JwtResponse;
+import com.example.demo.TokenConfig.TokenUtil;
 import com.example.demo.entity.Usuario;
 import com.example.demo.security.HashConfig;
 import com.example.demo.repository.UsuarioRepository;
 import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,21 +20,26 @@ public class AuthController {
     @Autowired
     HashConfig hashConfig;
 
+    @Autowired
+    private TokenUtil tokenUtil;
+
     @GetMapping("login")
     public String Login() {
         return "Pagina de login";
     }
 
     @PostMapping("login")
-    public String LoginForm(@RequestBody Usuario usuario) {
-       // var newSenha = hashConfig.encodePassword(usuario.getSenha());
+    public ResponseEntity LoginForm(@RequestBody Usuario usuario) {
+        /*        */
+
         var logon = usuarioRepository.findByEmail(usuario.getEmail());
         if(logon != null){
             if(hashConfig.comparePasswords(usuario.getSenha(), logon.getSenha())){
-                return "Logado";
+                final String token = tokenUtil.generateToken(logon);
+                return ResponseEntity.ok(new JwtResponse(token));
             }
-        };
-        return "Erro no login";
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @GetMapping("register")

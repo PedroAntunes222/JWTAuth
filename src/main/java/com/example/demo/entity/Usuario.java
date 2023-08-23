@@ -28,6 +28,10 @@ public class Usuario {
     @Column(name="senha", nullable = false)
     private String senha;
 
+    @Column(name="authorities", nullable = false)
+    private String authorities;
+
+
     @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "usuario")
     private List<Livro> livros;
