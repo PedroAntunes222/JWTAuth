@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.AuthConfig.ErroDTO;
 import com.example.demo.TokenConfig.JwtResponse;
 import com.example.demo.TokenConfig.TokenUtil;
 import com.example.demo.entity.Usuario;
@@ -18,7 +19,7 @@ public class AuthController {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    HashConfig hashConfig;
+    private HashConfig hashConfig;
 
     @Autowired
     private TokenUtil tokenUtil;
@@ -29,17 +30,18 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    public ResponseEntity LoginForm(@RequestBody Usuario usuario) {
-        /*        */
-
+    public String LoginForm(@RequestBody Usuario usuario) {
         var logon = usuarioRepository.findByEmail(usuario.getEmail());
         if(logon != null){
             if(hashConfig.comparePasswords(usuario.getSenha(), logon.getSenha())){
                 final String token = tokenUtil.generateToken(logon);
-                return ResponseEntity.ok(new JwtResponse(token));
+               // return ResponseEntity.ok(new JwtResponse(token));
+                return "token:" + token;
+            } else {
+                return "Senha errada";
             }
         }
-        return ResponseEntity.badRequest().build();
+        return "Request vazio";
     }
 
     @GetMapping("register")
@@ -50,7 +52,7 @@ public class AuthController {
     @PostMapping("register")
     public String sendRegister(@RequestBody Usuario usuario) {
         var newSenha = hashConfig.encodePassword(usuario.getSenha());
-        var newUsuario = new Usuario(usuario.getNome(), usuario.getEmail(), newSenha);
+        var newUsuario = new Usuario(usuario.getNome(), usuario.getEmail(), newSenha, usuario.getAuthorities());
         usuarioRepository.save(newUsuario);
         return "Usuario adicionado";
     }

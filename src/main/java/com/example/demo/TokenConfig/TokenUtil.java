@@ -8,10 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
@@ -27,17 +25,6 @@ public class TokenUtil implements Serializable {
 
     @Value("${jwt.secret}")
     private String secret;
-
-    /*
-    public Authentication decodeToken(HttpServletRequest request) {
-
-        if(request.getHeader("Authorization").equals("Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwZWRyb0BnbWFpbC5jb20iLCJleHAiOjE2OTI4MTQ5NDUsImlhdCI6MTY5Mjc5Njk0NX0.bALj6WXajRmfAtqCuDitBNuv0qRkEsOelLRMMIIA0_yhdZKlrX4CYAJlMe4wcJ_hwO5cHwHCW0aTPhWm_GV-zA")){
-            return new UsernamePasswordAuthenticationToken("user", null, Collections.emptyList());
-        }
-
-        return null;
-    }
-     */
 
     public Authentication createAuthenticationFromToken(String token) {
         User principal = new User("user", "", Collections.emptyList());
